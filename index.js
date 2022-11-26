@@ -8,7 +8,7 @@ app.use(express.json());
 require('dotenv').config();
 
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.disah5t.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
@@ -16,12 +16,29 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try {
         const categoriesCollection = client.db('carWorld').collection('categories');
+        const productsCollection = client.db('carWorld').collection('products');
+        const usersCollection = client.db('carWorld').collection('usersInfo');
 
         app.get('/categories', async (req, res) => {
             const query = {};
             const cursor = categoriesCollection.find(query);
             const categories = await cursor.toArray();
             res.send(categories);
+        })
+
+        app.get('/products/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { category_id: id };
+            const cursor = productsCollection.find(query);
+            const products = await cursor.toArray();
+            res.send(products);
+        })
+
+        app.post('/users', (req, res) => {
+            const user = req.body;
+            console.log(user);
+            const result = usersCollection.insertOne(user);
+            res.send(result);
         })
     }
     finally {
