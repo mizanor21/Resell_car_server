@@ -43,7 +43,23 @@ async function run() {
             res.send(result);
         })
 
-        app.post('/booking-products', (req, res) => {
+        app.get('/usersInfo', async (req, res) => {
+            const email = req.query.email;
+            // console.log(email)
+            const query = { email: email };
+            const usersInfo = await usersCollection.findOne(query);
+            res.send(usersInfo);
+        })
+
+        app.get('/booking_products', async (req, res) => {
+            const email = req.query.email;
+            console.log(email)
+            const query = { email: email };
+            const myProducts = await bookingCollection.find(query).toArray();
+            res.send(myProducts);
+        })
+
+        app.post('/booking_products', (req, res) => {
             const product = req.body;
             const result = bookingCollection.insertOne(product);
             res.send(result);
