@@ -18,6 +18,8 @@ async function run() {
         const categoriesCollection = client.db('carWorld').collection('categories');
         const productsCollection = client.db('carWorld').collection('products');
         const usersCollection = client.db('carWorld').collection('usersInfo');
+        const bookingCollection = client.db('carWorld').collection('booking-products');
+        const usersInfoCollection = client.db('carWorld').collection('usersInfo')
 
         app.get('/categories', async (req, res) => {
             const query = {};
@@ -36,9 +38,16 @@ async function run() {
 
         app.post('/users', (req, res) => {
             const user = req.body;
-            console.log(user);
+            // console.log(user);
             const result = usersCollection.insertOne(user);
             res.send(result);
+        })
+
+        app.post('/booking-products', (req, res) => {
+            const product = req.body;
+            const result = bookingCollection.insertOne(product);
+            res.send(result);
+
         })
     }
     finally {
