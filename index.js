@@ -21,6 +21,7 @@ async function run() {
         const bookingCollection = client.db('carWorld').collection('booking-products');
         const usersInfoCollection = client.db('carWorld').collection('usersInfo')
 
+        //get categories
         app.get('/categories', async (req, res) => {
             const query = {};
             const cursor = categoriesCollection.find(query);
@@ -28,6 +29,7 @@ async function run() {
             res.send(categories);
         })
 
+        //get specific categories products
         app.get('/products/:id', async (req, res) => {
             const id = req.params.id;
             const query = { category_id: id };
@@ -36,6 +38,7 @@ async function run() {
             res.send(products);
         })
 
+        //Post userinfo
         app.post('/users', (req, res) => {
             const user = req.body;
             // console.log(user);
@@ -43,29 +46,42 @@ async function run() {
             res.send(result);
         })
 
+        //Post product
         app.post('/products', (req, res) => {
             const product = req.body;
-            console.log(product);
+            // console.log(product);
             const result = productsCollection.insertOne(product);
             res.send(result);
         })
 
+        //My products
+        app.get('/products', async (req, res) => {
+            const email = req.query.email;
+            const query = { email: email };
+            const products = await productsCollection.find(query).toArray();
+            console.log(products);
+            res.send(products);
+        })
+
+        //get userinfo
         app.get('/usersInfo', async (req, res) => {
             const email = req.query.email;
             // console.log(email)
             const query = { email: email };
-            const usersInfo = await usersCollection.findOne(query);
+            const usersInfo = await usersInfoCollection.findOne(query);
             res.send(usersInfo);
         })
 
+        //get booked product
         app.get('/booking_products', async (req, res) => {
             const email = req.query.email;
-            console.log(email)
+            // console.log(email)
             const query = { email: email };
             const myProducts = await bookingCollection.find(query).toArray();
             res.send(myProducts);
         })
 
+        //post booking product
         app.post('/booking_products', (req, res) => {
             const product = req.body;
             const result = bookingCollection.insertOne(product);
